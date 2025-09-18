@@ -3,9 +3,9 @@
 namespace App\Matching\Strategy;
 
 use App\Entity\User;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
-#[AutoconfigureTag('app.matching_strategy')]
+#[Autoconfigure(tags: ['app.matching_strategy'], lazy: true)]
 interface MatchingStrategyInterface
 {
     public function match(User $user): iterable;
