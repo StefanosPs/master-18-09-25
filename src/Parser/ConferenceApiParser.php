@@ -7,14 +7,19 @@ use App\Entity\Organization;
 use App\Transformer\ApiToConferenceTransformer;
 use App\Transformer\ApiToOrganizationTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ConferenceApiParser
 {
+    private readonly bool $isOrgOrAdmin;
     public function __construct(
         private readonly EntityManagerInterface $manager,
         private readonly ApiToConferenceTransformer $conferenceTransformer,
         private readonly ApiToOrganizationTransformer $organizationTransformer,
-    ) {}
+        AuthorizationCheckerInterface $checker,
+    ) {
+        $this->isOrgOrAdmin = $checker->isGranted('ROLE_ADMIN') || $checker->isGranted('ROLE_ORGANIZER');
+    }
 
     public function parseApiResults(array $results): array
     {
@@ -28,7 +33,9 @@ class ConferenceApiParser
                 $conference->addOrganization($organization);
             }
 
-            $this->manager->flush();
+            if ($this->isOrgOrAdmin) {
+                $this->manager->flush();
+            }
 
             return $conference;
         }, $results);
@@ -43,7 +50,10 @@ class ConferenceApiParser
 
         if (null === $conference) {
             $conference = $this->conferenceTransformer->transform($apiConf);
-            $this->manager->persist($conference);
+
+            if ($this->isOrgOrAdmin) {
+                $this->manager->persist($conference);
+            }
         }
 
         return $conference;
@@ -55,7 +65,10 @@ class ConferenceApiParser
 
         if (null === $organization) {
             $organization = $this->organizationTransformer->transform($apiOrg);
-            $this->manager->persist($organization);
+
+            if ($this->isOrgOrAdmin) {
+                $this->manager->persist($organization);
+            }
         }
 
         return $organization;

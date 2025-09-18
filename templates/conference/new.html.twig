@@ -5,7 +5,11 @@
 {% block body %}
 <section class="container row row-cols-1">
     <div class="col-md-8 mx-auto">
-        <h1>New conference</h1>
+        {% if conference.id is not null %}
+            <h1>Edit {{ conference.name }}</h1>
+        {% else %}
+            <h1>New conference</h1>
+        {% endif %}
     </div>
 
     {{ include('includes/_form.html.twig', {button_label: 'Save'}) }}

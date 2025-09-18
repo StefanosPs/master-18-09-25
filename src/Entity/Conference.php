@@ -7,11 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ConferenceRepository::class)]
 class Conference
 {
+    #[Groups(['Volunteering'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,6 +21,7 @@ class Conference
 
     #[Assert\Length(min: 10)]
     #[Assert\NotNull()]
+    #[Groups(['Volunteering'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
@@ -37,11 +40,13 @@ class Conference
 
     #[Assert\GreaterThan('today')]
     #[Assert\NotNull()]
+    #[Groups(['Volunteering'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $startAt = null;
 
     #[Assert\GreaterThan(propertyPath: 'startAt')]
     #[Assert\NotNull()]
+    #[Groups(['Volunteering'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $endAt = null;
 
@@ -56,8 +61,12 @@ class Conference
      */
     #[Assert\NotNull()]
     #[Assert\Valid()]
+    #[Groups(['Volunteering'])]
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'conferences')]
     private Collection $organizations;
+
+    #[ORM\ManyToOne(inversedBy: 'conferences')]
+    private ?User $createdBy = null;
 
     public function __construct()
     {
@@ -192,6 +201,18 @@ class Conference
     public function removeOrganization(Organization $organization): static
     {
         $this->organizations->removeElement($organization);
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }
