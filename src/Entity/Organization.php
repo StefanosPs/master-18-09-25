@@ -12,13 +12,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
-    #[Groups(['Volunteering'])]
+    #[Groups('Volunteering')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['Volunteering'])]
+    #[Groups('Volunteering')]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

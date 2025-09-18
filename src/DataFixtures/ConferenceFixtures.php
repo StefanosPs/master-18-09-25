@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Conference;
+use App\Entity\Tag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -21,6 +22,11 @@ class ConferenceFixtures extends Fixture
                 ->setStartAt(new \DateTimeImmutable('28-03-'.$year))
                 ->setEndAt(new \DateTimeImmutable('29-03-'.$year))
             ;
+
+            foreach ((array) array_rand(TagFixtures::TAGS, rand(1, 3)) as $key) {
+                $name = TagFixtures::TAGS[$key];
+                $conference->addTag($this->getReference(TagFixtures::TAG_NAME.$name, Tag::class));
+            }
 
             $manager->persist($conference);
             $manager->flush();

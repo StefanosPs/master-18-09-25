@@ -68,10 +68,24 @@ class Conference
     #[ORM\ManyToOne(inversedBy: 'conferences')]
     private ?User $createdBy = null;
 
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    private Collection $tags;
+
+    /**
+     * @var Collection<int, Skill>
+     */
+    #[ORM\ManyToMany(targetEntity: Skill::class)]
+    private Collection $neededSkills;
+
     public function __construct()
     {
         $this->volunteerings = new ArrayCollection();
         $this->organizations = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->neededSkills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -213,6 +227,54 @@ class Conference
     public function setCreatedBy(?User $createdBy): static
     {
         $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skill>
+     */
+    public function getNeededSkills(): Collection
+    {
+        return $this->neededSkills;
+    }
+
+    public function addNeededSkill(Skill $neededSkill): static
+    {
+        if (!$this->neededSkills->contains($neededSkill)) {
+            $this->neededSkills->add($neededSkill);
+        }
+
+        return $this;
+    }
+
+    public function removeNeededSkill(Skill $neededSkill): static
+    {
+        $this->neededSkills->removeElement($neededSkill);
 
         return $this;
     }

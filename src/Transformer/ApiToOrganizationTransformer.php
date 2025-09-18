@@ -6,13 +6,11 @@ use App\Entity\Organization;
 
 class ApiToOrganizationTransformer implements ApiToEntityTransformerInterface
 {
-
-    public function transform(array $data): object
+    public function transform(array $data): Organization
     {
-        $org = (new Organization())
+        return (new Organization())
             ->setName($data['name'])
             ->setPresentation($data['presentation'])
-            ->setCreatedAt(new \DateTimeImmutable($data['createdAt'] ?? 'now'))
-        ;
+            ->setCreatedAt(new \DateTimeImmutable($data['createdAt']));
     }
 }

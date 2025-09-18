@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Form\ContactType;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class MainController extends AbstractController
+class MainController extends AbstractController
 {
     #[Route('/', name: 'app_main_index')]
     public function index(Request $request): Response
@@ -24,8 +25,8 @@ final class MainController extends AbstractController
     public function contact(Request $request): Response
     {
         $form = $this->createForm(ContactType::class);
-        $form->handleRequest($request);
 
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             dump($form->getData());
 

@@ -12,17 +12,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Groups(['Volunteering'])]
+    #[Groups('Volunteering')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['Volunteering'])]
+    #[Groups('Volunteering')]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
@@ -47,23 +48,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Organization>
      */
+    #[Groups('Volunteering')]
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
     private Collection $organizations;
 
-    /**
-     * @var Collection<int, Conference>
-     */
-    #[ORM\OneToMany(targetEntity: Conference::class, mappedBy: 'createdBy')]
-    private Collection $conferences;
-
     #[ORM\Column(length: 255)]
     private ?string $apiKey = null;
+
+    #[ORM\OneToOne(mappedBy: 'forUser', cascade: ['persist', 'remove'])]
+    private ?VolunteerProfile $volunteerProfile = null;
 
     public function __construct()
     {
         $this->volunteerings = new ArrayCollection();
         $this->organizations = new ArrayCollection();
-        $this->conferences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,6 +93,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -118,7 +118,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -131,20 +131,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     * @see UserInterface
      */
-    public function __serialize(): array
-    {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
-
-        return $data;
-    }
-
-    #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     /**
@@ -201,36 +193,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Conference>
-     */
-    public function getConferences(): Collection
-    {
-        return $this->conferences;
-    }
-
-    public function addConference(Conference $conference): static
-    {
-        if (!$this->conferences->contains($conference)) {
-            $this->conferences->add($conference);
-            $conference->setCreatedBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeConference(Conference $conference): static
-    {
-        if ($this->conferences->removeElement($conference)) {
-            // set the owning side to null (unless already changed)
-            if ($conference->getCreatedBy() === $this) {
-                $conference->setCreatedBy(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getApiKey(): ?string
     {
         return $this->apiKey;
@@ -239,6 +201,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiKey(): static
     {
         $this->apiKey = password_hash(base64_encode(random_bytes(48)), PASSWORD_BCRYPT);
+
+        return $this;
+    }
+
+    public function getVolunteerProfile(): ?VolunteerProfile
+    {
+        return $this->volunteerProfile;
+    }
+
+    public function setVolunteerProfile(VolunteerProfile $volunteerProfile): static
+    {
+        // set the owning side of the relation if necessary
+        if ($volunteerProfile->getForUser() !== $this) {
+            $volunteerProfile->setForUser($this);
+        }
+
+        $this->volunteerProfile = $volunteerProfile;
 
         return $this;
     }
