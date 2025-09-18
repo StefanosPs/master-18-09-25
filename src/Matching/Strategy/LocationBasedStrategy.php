@@ -13,4 +13,9 @@ class LocationBasedStrategy implements MatchingStrategyInterface
         // TODO: Implement match() method.
         return [];
     }
+
+    public static function getName(): string
+    {
+        return 'location';
+    }
 }

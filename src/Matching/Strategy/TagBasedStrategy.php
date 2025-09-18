@@ -15,4 +15,9 @@ class TagBasedStrategy implements MatchingStrategyInterface
     {
         return $this->repository->findForTags($user);
     }
+
+    public static function getName(): string
+    {
+        return 'tag';
+    }
 }

@@ -86,7 +86,7 @@ class ConferenceController extends AbstractController
     #[Route('/conferences/match/{strategy}', name: 'app_conference_match', requirements: ['strategy' => 'tag|skill|location'])]
     public function match(string $strategy, #[CurrentUser] User $user, TagBasedStrategy $tagStrategy, MessageBusInterface $bus): Response
     {
-        $bus->dispatch(new MatchVolunteerMessage('test'));
+        $bus->dispatch(new MatchVolunteerMessage($user->getId(), $strategy));
 
         return $this->render('conference/list.html.twig', [
             'conferences' => $tagStrategy->match($user),

@@ -4,11 +4,12 @@ namespace App\Message;
 
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
-#[AsMessage('async')]
+#[AsMessage('sync')]
 final class MatchVolunteerMessage
 {
     public function __construct(
-        public readonly string $name,
+        public readonly int $userId,
+        public readonly string $strategyName,
     ) {
     }
 }

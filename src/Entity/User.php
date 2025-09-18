@@ -52,6 +52,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
     private Collection $organizations;
 
+    /**
+     * @var Collection<int, Conference>
+     */
+    #[ORM\OneToMany(targetEntity: Conference::class, mappedBy: 'createdBy')]
+    private Collection $conferences;
+
     #[ORM\Column(length: 255)]
     private ?string $apiKey = null;
 
@@ -62,6 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->volunteerings = new ArrayCollection();
         $this->organizations = new ArrayCollection();
+        $this->conferences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,13 +137,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // @deprecated, to be removed when upgrading to Symfony 8
     }
 
     /**
@@ -193,14 +197,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getApiKey(): ?string
+    /**
+     * @return Collection<int, Conference>
+     */
+    public function getConferences(): Collection
     {
-        return $this->apiKey;
+        return $this->conferences;
     }
 
-    public function setApiKey(): static
+    public function addConference(Conference $conference): static
     {
-        $this->apiKey = password_hash(base64_encode(random_bytes(48)), PASSWORD_BCRYPT);
+        if (!$this->conferences->contains($conference)) {
+            $this->conferences->add($conference);
+            $conference->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConference(Conference $conference): static
+    {
+        if ($this->conferences->removeElement($conference)) {
+            // set the owning side to null (unless already changed)
+            if ($conference->getCreatedBy() === $this) {
+                $conference->setCreatedBy(null);
+            }
+        }
 
         return $this;
     }
@@ -210,14 +232,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->volunteerProfile;
     }
 
-    public function setVolunteerProfile(VolunteerProfile $volunteerProfile): static
+    public function setVolunteerProfile(?VolunteerProfile $volunteerProfile): User
     {
-        // set the owning side of the relation if necessary
-        if ($volunteerProfile->getForUser() !== $this) {
-            $volunteerProfile->setForUser($this);
-        }
-
         $this->volunteerProfile = $volunteerProfile;
+        $volunteerProfile->setForUser($this);
+
+        return $this;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+
+    public function setApiKey(): static
+    {
+        $this->apiKey = password_hash(base64_encode(random_bytes(48)), PASSWORD_BCRYPT);
 
         return $this;
     }

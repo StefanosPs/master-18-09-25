@@ -16,4 +16,9 @@ class SkillBasedStrategy implements MatchingStrategyInterface
     {
         return $this->repository->findForSkills($user);
     }
+
+    public static function getName(): string
+    {
+        return 'skill';
+    }
 }
