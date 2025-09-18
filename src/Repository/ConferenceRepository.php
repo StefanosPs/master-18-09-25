@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Conference;
+use App\Entity\Skill;
 use App\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -71,28 +72,21 @@ class ConferenceRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    //    /**
-    //     * @return Conference[] Returns an array of Conference objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findForSkills(User $user): iterable
+    {
+        $qb = $this->createQueryBuilder('c');
+        $skillIds = $user
+            ->getVolunteerProfile()
+            ->getSkills()
+            ->map(fn(Skill $skill) => $skill->getId());
 
-    //    public function findOneBySomeField($value): ?Conference
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $qb
+            ->innerJoin('c.neededSkills', 's')
+            ->where($qb->expr()->in('s.id', ':skillIds'))
+            ->setParameter('skillIds', $skillIds)
+            ->groupBy('c.id')
+            ->orderBy($qb->expr()->count('s.id'), 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

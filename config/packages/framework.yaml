@@ -8,7 +8,7 @@ framework:
 
     http_client:
         scoped_clients:
-            events.client:
+            conferences.client:
                 base_uri: 'https://www.devevents-api.fr'
                 headers:
                     Accept: 'application/json'
