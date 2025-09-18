@@ -1,7 +1,5 @@
 framework:
     messenger:
-        failure_transport: failed
-
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async:
@@ -14,6 +12,8 @@ framework:
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
+
+        failure_transport: failed
 
         default_bus: messenger.bus.default
 
