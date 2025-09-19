@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\User;
 use App\Repository\VolunteerProfileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +16,11 @@ final class VolunteerProfileController extends AbstractController
     {
         $profiles = $repository->findAll();
 
-        return $this->json($profiles, context: ['groups' => ['profile:read'], AbstractNormalizer::CALLBACKS => []]);
+        return $this->json(
+            $profiles,
+            context: [
+                'groups' => ['profile:read'],
+            ]
+        );
     }
 }

@@ -1,3 +1,6 @@
 framework:
     serializer:
         name_converter: 'App\Serializer\NameConverter\AppNameConverter'
+        default_context:
+            circular_reference_handler: 'App\Serializer\AppCircularReferenceHandler::handle'
+

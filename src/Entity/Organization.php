@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
-class Organization
+class Organization implements EntityInterface
 {
     #[Groups('Volunteering')]
     #[ORM\Id]

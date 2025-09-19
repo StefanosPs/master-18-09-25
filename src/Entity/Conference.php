@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ConferenceRepository::class)]
-class Conference
+class Conference implements EntityInterface
 {
     #[Groups(['conf:read', 'Volunteering'])]
     #[ORM\Id]

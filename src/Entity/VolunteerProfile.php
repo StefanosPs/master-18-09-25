@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[Groups(['profile:read'])]
 #[ORM\Entity(repositoryClass: VolunteerProfileRepository::class)]
-class VolunteerProfile
+class VolunteerProfile implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
