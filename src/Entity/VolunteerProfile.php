@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[Groups(['profile:read'])]
 #[ORM\Entity(repositoryClass: VolunteerProfileRepository::class)]
@@ -18,7 +17,6 @@ class VolunteerProfile
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'volunteerProfile', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $forUser = null;
