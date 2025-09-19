@@ -6,6 +6,7 @@ use App\Repository\VolunteerProfileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 final class VolunteerProfileController extends AbstractController
 {
@@ -14,6 +15,6 @@ final class VolunteerProfileController extends AbstractController
     {
         $profiles = $repository->findAll();
 
-        return $this->json($profiles, context: ['groups' => ['profile:read']]);
+        return $this->json($profiles, context: ['groups' => ['profile:read'], AbstractNormalizer::CALLBACKS => []]);
     }
 }

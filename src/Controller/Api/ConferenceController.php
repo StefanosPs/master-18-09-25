@@ -14,6 +14,6 @@ final class ConferenceController extends AbstractController
     {
         $conferences = $repository->findAll();
 
-        return $this->json($conferences, context: ['groups' => ['conf:read']]);
+        return $this->json($conferences, context: ['groups' => ['conf:read'], 'private_api' => false]);
     }
 }
