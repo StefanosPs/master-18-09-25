@@ -13,6 +13,10 @@ framework:
                 headers:
                     Accept: 'application/json'
                     apikey: '%env(CONF_API_KEY)%'
+            volunteers.client:
+                base_uri: 'https://my-json-server.typicode.com'
+                retry_failed:
+                    max_retries: 3
 
     #esi: true
     #fragments: true

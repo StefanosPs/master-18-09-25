@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Repository\VolunteeringRepository;
+use App\Search\Client\ExternalVolunteerApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,5 +21,11 @@ final class VolunteeringController extends AbstractController
         $volunteering = $repository->findBy([], [], $limit, ($page - 1) * $limit);
 
         return $this->json($volunteering, Response::HTTP_OK, context: ['groups' => ['Volunteering']]);
+    }
+
+    #[Route('/api/volunteering/external', name: 'app_api_get_volunteering_external', methods: [ 'GET'])]
+    public function getExternalVolunteerings(ExternalVolunteerApiClient $client): Response
+    {
+        return $this->json($client->fetchVolunteers());
     }
 }
