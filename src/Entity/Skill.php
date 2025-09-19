@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use App\Repository\SkillRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[Groups(['conf:read', 'profile:read'])]
 #[ORM\Entity(repositoryClass: SkillRepository::class)]
 class Skill
 {

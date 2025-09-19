@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ConferenceRepository::class)]
 class Conference
 {
-    #[Groups(['Volunteering'])]
+    #[Groups(['conf:read', 'Volunteering'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,32 +21,35 @@ class Conference
 
     #[Assert\Length(min: 10)]
     #[Assert\NotNull()]
-    #[Groups(['Volunteering'])]
+    #[Groups(['conf:read', 'Volunteering'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[Assert\NotNull()]
     #[Assert\Length(min: 30)]
+    #[Groups(['conf:read'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
     #[Assert\NotNull()]
+    #[Groups(['conf:read'])]
     #[ORM\Column]
     private ?bool $accessible = null;
 
     #[Assert\Length(min: 20)]
+    #[Groups(['conf:read'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $prerequisites = null;
 
     #[Assert\GreaterThan('today')]
     #[Assert\NotNull()]
-    #[Groups(['Volunteering'])]
+    #[Groups(['conf:read', 'Volunteering'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $startAt = null;
 
     #[Assert\GreaterThan(propertyPath: 'startAt')]
     #[Assert\NotNull()]
-    #[Groups(['Volunteering'])]
+    #[Groups(['conf:read', 'Volunteering'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $endAt = null;
 
@@ -71,12 +74,14 @@ class Conference
     /**
      * @var Collection<int, Tag>
      */
+    #[Groups(['conf:read'])]
     #[ORM\ManyToMany(targetEntity: Tag::class)]
     private Collection $tags;
 
     /**
      * @var Collection<int, Skill>
      */
+    #[Groups(['conf:read'])]
     #[ORM\ManyToMany(targetEntity: Skill::class)]
     private Collection $neededSkills;
 
