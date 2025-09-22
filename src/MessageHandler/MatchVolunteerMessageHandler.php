@@ -2,29 +2,18 @@
 
 namespace App\MessageHandler;
 
-use App\Matching\Strategy\MatchingStrategyInterface;
+use App\Matching\Handler\MatcherInterface;
 use App\Message\MatchVolunteerMessage;
 use App\Repository\UserRepository;
-use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 #[AsMessageHandler]
 final class MatchVolunteerMessageHandler
 {
     public function __construct(
-        /**
-         * @var MatchingStrategyInterface[]
-         */
-        #[AutowireIterator('app.matching_strategy', defaultIndexMethod: 'getName')]
-        private iterable $strategies, // ['tag'=> new TagBasedStrategy, ...]
+        private readonly MatcherInterface $handler,
         private readonly UserRepository $userRepository,
-    )
-    {
-        $this->strategies = $strategies instanceof \Traversable ? iterator_to_array($strategies) : $strategies;
-    }
+    ) {}
 
     public function __invoke(MatchVolunteerMessage $message): void
     {
@@ -33,8 +22,8 @@ final class MatchVolunteerMessageHandler
             throw new \InvalidArgumentException('User not found');
         }
 
-        $strategy = $this->strategies[$message->strategyName];
+        $strategy = $this->handler->match($user, $message->strategyName);
 
-        dump($strategy->match($user));
+        dump($strategy);
     }
 }

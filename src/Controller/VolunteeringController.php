@@ -27,7 +27,7 @@ final class VolunteeringController extends AbstractController
         $volunteering = (new Volunteering())->setForUser($this->getUser());
         $options = [];
 
-        if ($request->query->get('conference')) {
+        if ($request->query->has('conference')) {
             $conference = $manager->getRepository(Conference::class)->find($request->get('conference'));
             $volunteering->setConference($conference);
             $options['conference'] = $conference;

@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Skill;
 use App\Entity\Tag;
 use App\Entity\VolunteerProfile;
+use App\Form\Transformer\SkillsToFormTransformer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,6 +13,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VolunteerProfileType extends AbstractType
 {
+    public function __construct(
+        private readonly SkillsToFormTransformer $skillsToFormTransformer
+    ) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -24,7 +29,9 @@ class VolunteerProfileType extends AbstractType
                 'class' => Tag::class,
                 'choice_label' => 'name',
                 'multiple' => true,
-            ]);
+            ])
+            ->addModelTransformer($this->skillsToFormTransformer);
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

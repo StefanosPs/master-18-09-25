@@ -17,9 +17,9 @@ framework:
                 base_uri: 'https://my-json-server.typicode.com'
                 retry_failed:
                     max_retries: 3
-    http_cache:
-        enabled: true
-        default_ttl: 3600
+#    http_cache:
+#        enabled: true
+#        default_ttl: 3600
 
     #esi: true
     #fragments: true
