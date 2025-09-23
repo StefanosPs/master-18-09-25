@@ -6,14 +6,16 @@ use App\Entity\Organization;
 use App\Entity\User;
 use App\Entity\VolunteerProfile;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-class UserFixtures extends Fixture
+class UserFixtures extends Fixture implements DependentFixtureInterface
 {
     public function __construct(
         private readonly PasswordHasherFactoryInterface $passwordHasherFactory,
-    ) {}
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -22,8 +24,7 @@ class UserFixtures extends Fixture
             ->setRoles(['ROLE_USER', 'ROLE_ADMIN'])
             ->setVolunteerProfile(new VolunteerProfile())
             ->addOrganization($this->getReference(OrganizationFixtures::SF_ORG, Organization::class))
-            ->setApiKey()
-        ;
+            ->setApiKey();
         // WARNING: DO NOT EVER USE THIS WITH A PLAIN UNENCODED PASSWORD IN PRODUCTION THIS WAY
         $password = $this->passwordHasherFactory->getPasswordHasher($user)->hash('admin');
         $user->setPassword($password);
@@ -34,8 +35,7 @@ class UserFixtures extends Fixture
             ->setRoles(['ROLE_USER', 'ROLE_ORGANIZER'])
             ->setVolunteerProfile(new VolunteerProfile())
             ->addOrganization($this->getReference(OrganizationFixtures::SF_ORG, Organization::class))
-            ->setApiKey()
-        ;
+            ->setApiKey();
         // WARNING: DO NOT EVER USE THIS WITH A PLAIN UNENCODED PASSWORD IN PRODUCTION THIS WAY
         $password = $this->passwordHasherFactory->getPasswordHasher($user)->hash('organizer');
         $user->setPassword($password);
@@ -46,13 +46,17 @@ class UserFixtures extends Fixture
             ->setRoles(['ROLE_USER'])
             ->setVolunteerProfile(new VolunteerProfile())
             ->addOrganization($this->getReference(OrganizationFixtures::SF_ORG, Organization::class))
-            ->setApiKey()
-        ;
+            ->setApiKey();
         // WARNING: DO NOT EVER USE THIS WITH A PLAIN UNENCODED PASSWORD IN PRODUCTION THIS WAY
         $password = $this->passwordHasherFactory->getPasswordHasher($user)->hash('user');
         $user->setPassword($password);
         $manager->persist($user);
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [OrganizationFixtures::class];
     }
 }
