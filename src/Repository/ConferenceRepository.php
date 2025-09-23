@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Conference;
+use App\Entity\Organization;
 use App\Entity\Skill;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -86,6 +87,17 @@ class ConferenceRepository extends ServiceEntityRepository
             ->setParameter('skillIds', $skillIds)
             ->groupBy('c.id')
             ->orderBy($qb->expr()->count('s.id'), 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function fetchForOrganization(Organization $organization, int $limit): iterable
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.organizations', 'o')
+            ->where('o = :organization')
+            ->setParameter('organization', $organization)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }

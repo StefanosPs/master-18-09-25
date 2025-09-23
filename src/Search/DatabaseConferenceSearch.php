@@ -44,6 +44,6 @@ class DatabaseConferenceSearch implements ConferenceSearchInterface
             throw new \LogicException('Missing configuration.');
         }
 
-        return $this->repository->findBy(['organization' => $this->organization], limit: $this->limit);
+        return $this->repository->fetchForOrganization($this->organization, $this->limit);
     }
 }
