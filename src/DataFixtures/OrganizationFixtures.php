@@ -10,6 +10,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const SF_ORG = 'sf_org';
+
     public function load(ObjectManager $manager): void
     {
         $org = (new Organization())
@@ -23,6 +25,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->persist($org);
         $manager->flush();
+        $this->addReference(self::SF_ORG, $org);
     }
 
     public function getDependencies(): array

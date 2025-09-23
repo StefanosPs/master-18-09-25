@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Organization;
 use App\Entity\User;
 use App\Entity\VolunteerProfile;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -20,6 +21,7 @@ class UserFixtures extends Fixture
             ->setEmail('admin@sensio-events.com')
             ->setRoles(['ROLE_USER', 'ROLE_ADMIN'])
             ->setVolunteerProfile(new VolunteerProfile())
+            ->addOrganization($this->getReference(OrganizationFixtures::SF_ORG, Organization::class))
             ->setApiKey()
         ;
         // WARNING: DO NOT EVER USE THIS WITH A PLAIN UNENCODED PASSWORD IN PRODUCTION THIS WAY
@@ -31,6 +33,7 @@ class UserFixtures extends Fixture
             ->setEmail('organizer@sensio-events.com')
             ->setRoles(['ROLE_USER', 'ROLE_ORGANIZER'])
             ->setVolunteerProfile(new VolunteerProfile())
+            ->addOrganization($this->getReference(OrganizationFixtures::SF_ORG, Organization::class))
             ->setApiKey()
         ;
         // WARNING: DO NOT EVER USE THIS WITH A PLAIN UNENCODED PASSWORD IN PRODUCTION THIS WAY
@@ -42,6 +45,7 @@ class UserFixtures extends Fixture
             ->setEmail('user@sensio-events.com')
             ->setRoles(['ROLE_USER'])
             ->setVolunteerProfile(new VolunteerProfile())
+            ->addOrganization($this->getReference(OrganizationFixtures::SF_ORG, Organization::class))
             ->setApiKey()
         ;
         // WARNING: DO NOT EVER USE THIS WITH A PLAIN UNENCODED PASSWORD IN PRODUCTION THIS WAY
