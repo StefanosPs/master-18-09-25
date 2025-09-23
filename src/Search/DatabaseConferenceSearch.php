@@ -4,7 +4,9 @@ namespace App\Search;
 
 use App\Entity\Organization;
 use App\Repository\ConferenceRepository;
+use Symfony\Component\DependencyInjection\Attribute\Lazy;
 
+#[Lazy]
 class DatabaseConferenceSearch implements ConferenceSearchInterface
 {
     private ?Organization $organization = null;

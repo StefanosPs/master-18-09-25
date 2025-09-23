@@ -24,5 +24,11 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Search\DatabaseConferenceSearch:
-        configurator: ['@App\Search\Configurator\DatabaseConferenceSearchConfigurator', 'configure']
+#    App\Search\DatabaseConferenceSearch:
+#        configurator: ['@App\Search\Configurator\DatabaseConferenceSearchConfigurator', 'configure']
+
+    App\Search\ConferenceSearchInterface:
+        factory: ['@App\Search\Factory\ConferenceSearchFactory', 'create']
+        arguments:
+            $searchType: '%env(SEARCH_TYPE)%'
+            $searchLocator: !tagged_locator app.search.conference
