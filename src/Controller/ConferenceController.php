@@ -7,14 +7,14 @@ namespace App\Controller;
 use App\Entity\Conference;
 use App\Entity\User;
 use App\Form\ConferenceType;
-use App\Matching\Strategy\TagBasedStrategy;
-use App\Message\MatchVolunteerMessage;
+use App\Matching\Strategy\TagMatchingStrategy;
 use App\Search\ConferenceSearchInterface;
 use App\Search\DatabaseConferenceSearch;
 use App\Security\Voter\EditionVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +22,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Tiriel\MatchingBundle\Matching\Strategy\TraceableMatchingStrategy;
+use Tiriel\MatchingBundle\Message\MatchingMessage;
 
 class ConferenceController extends AbstractController
 {
@@ -84,9 +86,13 @@ class ConferenceController extends AbstractController
     }
 
     #[Route('/conferences/match/{strategy}', name: 'app_conference_match', requirements: ['strategy' => 'tag|skill|location'])]
-    public function match(string $strategy, #[CurrentUser] User $user, TagBasedStrategy $tagStrategy, MessageBusInterface $bus): Response
-    {
-        $bus->dispatch(new MatchVolunteerMessage($user->getId(), $strategy));
+    public function match(
+        string $strategy,
+        #[CurrentUser] User $user,
+        #[Autowire(service: TagMatchingStrategy::class)] TraceableMatchingStrategy $tagStrategy,
+        MessageBusInterface $bus
+    ): Response {
+        $bus->dispatch(new MatchingMessage($user->getId(), $strategy));
 
         return $this->render('conference/list.html.twig', [
             'conferences' => $tagStrategy->match($user),

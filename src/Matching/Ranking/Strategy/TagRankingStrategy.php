@@ -4,44 +4,20 @@ namespace App\Matching\Ranking\Strategy;
 
 use App\Entity\Conference;
 use App\Entity\User;
+use Tiriel\MatchingBundle\Interface\MatchableUserInterface;
+use Tiriel\MatchingBundle\Matching\Ranking\Strategy\AbstractRankingStrategy;
 
-class TagRankingStrategy implements RankingStrategyInterface
+class TagRankingStrategy extends AbstractRankingStrategy
 {
-
-    public function rank(User $user, iterable $matchings): iterable
+    public function getMatchableFromUser(MatchableUserInterface $user): array
     {
-        $userInterests = $user->getVolunteerProfile()?->getInterests() ?? [];
-        $userInterestNames = [];
-        
-        // Extract tag names from user interests
-        foreach ($userInterests as $interest) {
-            $userInterestNames[] = $interest->getName();
-        }
-        
-        // Convert iterable to array for sorting
-        $conferences = iterator_to_array($matchings);
-        
-        // Sort conferences by number of matching tags (descending)
-        usort($conferences, function (Conference $a, Conference $b) use ($userInterestNames) {
-            $aMatches = $this->countMatchingTags($a, $userInterestNames);
-            $bMatches = $this->countMatchingTags($b, $userInterestNames);
-            
-            return $bMatches <=> $aMatches; // Descending order
-        });
-        
-        return $conferences;
+        /** @var User $user */
+        return $user->getVolunteerProfile()->getInterests()->toArray();
     }
-    
-    private function countMatchingTags(Conference $conference, array $userInterestNames): int
+
+    public function getMatchablesFromEntity(object $entity): iterable
     {
-        $matches = 0;
-        
-        foreach ($conference->getTags() as $tag) {
-            if (in_array($tag->getName(), $userInterestNames, true)) {
-                $matches++;
-            }
-        }
-        
-        return $matches;
+        /** @var Conference $entity */
+        return $entity->getTags()->toArray();
     }
 }

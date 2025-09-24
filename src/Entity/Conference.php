@@ -9,9 +9,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Tiriel\MatchingBundle\Interface\MatchableEntityInterface;
 
 #[ORM\Entity(repositoryClass: ConferenceRepository::class)]
-class Conference implements EntityInterface
+class Conference implements EntityInterface, MatchableEntityInterface
 {
     #[Groups(['conf:read', 'Volunteering'])]
     #[ORM\Id]

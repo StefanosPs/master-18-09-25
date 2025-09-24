@@ -5,10 +5,11 @@ namespace App\Entity;
 use App\Repository\TagRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Tiriel\MatchingBundle\Interface\MatchableEntityInterface;
 
 #[Groups(['conf:read', 'profile:read'])]
 #[ORM\Entity(repositoryClass: TagRepository::class)]
-class Tag
+class Tag implements MatchableEntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

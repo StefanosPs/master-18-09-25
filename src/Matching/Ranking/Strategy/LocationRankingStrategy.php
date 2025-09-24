@@ -2,13 +2,18 @@
 
 namespace App\Matching\Ranking\Strategy;
 
-use App\Entity\User;
+use Tiriel\MatchingBundle\Interface\MatchableUserInterface;
+use Tiriel\MatchingBundle\Matching\Ranking\Strategy\AbstractRankingStrategy;
 
-class LocationRankingStrategy implements RankingStrategyInterface
+class LocationRankingStrategy extends AbstractRankingStrategy
 {
-
-    public function rank(User $user, iterable $matchings): iterable
+    public function getMatchableFromUser(MatchableUserInterface $user): array
     {
-        return $matchings;
+        return [];
+    }
+
+    public function getMatchablesFromEntity(object $entity): iterable
+    {
+        return [];
     }
 }

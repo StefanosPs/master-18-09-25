@@ -1,0 +1,4 @@
+tiriel_matching:
+    user_repository: 'App\Repository\UserRepository'
+    matching_namespace: 'App\Matching\Strategy'
+    ranking_namespace: 'App\Matching\Ranking\Strategy'
